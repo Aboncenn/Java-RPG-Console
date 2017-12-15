@@ -12,63 +12,197 @@ import personnages.Ors;
 import personnages.Pieges;
 import personnages.Rochers;
 
+/**
+ * Classe permettant de crÃ©e le jeu.
+ * 
+ * La fonction Runnable permet d'appeler avec efficacitÃ© les l'initialisations
+ *    l'affichage, les ticks, le render et l'init
+ * 
+ * @author AurÃ©lien Boncenne
+ */
 public class Game implements Runnable{
 	
+	 /**
+     * Booleen permettant de mettre en avant si la fonction runnable fonctionne
+     * 
+     * @see stop()
+     * @see start()
+     */
 	private boolean running;
+	/**
+     * Variable erreur permettant de traiter lesdites erreurs.
+     * 
+     * @see stop()
+     * @see start()
+     */
 	private Thread thread;
-	
-	// générer la carte
+	/**
+     * Tableau bidimentionnel generant la carte
+     * 
+     * @see afficherCarte()
+     * @see initialiserCarte()
+     */
 	String[][] map = new String[20][20];
 
+	/**
+     * variable initial joueurs
+     * 
+     * @see afficherCarte()
+     * @see initialiserCarte()
+     */
 	private Joueurs personnage = new Joueurs(0,0);
-	// vie du personnage
+	/**
+     * variable intial incrementant la vie du personnage
+     * 
+     */
 	private int vie = personnage.getVie();
-	private Herbes herbe = new Herbes() ;
-	private Fleures fleur = new Fleures() ;
+	/**
+     * variable initial herbe
+     * 
+     * @see afficherCarte()
+     * @see initialiserCarte()
+     */
+	private Herbes herbe = new Herbes();
+	/**
+     * variable initial fleurs
+     * 
+     * @see afficherCarte()
+     * @see initialiserCarte()
+     */
+	private Fleures fleur = new Fleures();
+	/**
+     * variable initial arbres
+     * 
+     * @see afficherCarte()
+     * @see initialiserCarte()
+     */
 	private Arbres arbre = new Arbres();
+	/**
+     * variable initial rocher
+     * 
+     * @see afficherCarte()
+     * @see initialiserCarte()
+     */
 	private Rochers rocher = new Rochers();
+	/**
+     * variable initial clefs
+     * 
+     * @see afficherCarte()
+     * @see initialiserCarte()
+     */
 	private Clefs clef = new Clefs();
+	/**
+     * variable intial incrementant les clefs
+     * 
+     */
 	private int trouseau = clef.getTrouseau();
+	/**
+     * variable initial ors
+     * 
+     * @see afficherCarte()
+     * @see initialiserCarte()
+     */
 	private Ors or = new Ors();
-	// contenant d'or
+	/**
+     * variable intial incrementant la bourse du personnage
+     * 
+     */
 	private int bourse = or.getBourse();
+	/**
+     * variable initial cadenas
+     * 
+     * @see afficherCarte()
+     * @see initialiserCarte()
+     */
 	private Cadenas cadenas = new Cadenas();
+	/**
+     * variable initial piege
+     * 
+     * @see afficherCarte()
+     * @see initialiserCarte()
+     */
 	private Pieges piege = new Pieges();
+	/**
+     * variable initial monstres
+     * 
+     * @see afficherCarte()
+     * @see initialiserCarte()
+     */
 	private Monstres monstre = new Monstres();
-	// variable pour vérifier la tuile ou va le personnage
+	/**
+     * variable initial permettant de lire la tuile
+     * 
+     */
 	private String tuile;
-	// coordonnées du joueur
+	
+	/**
+     * initialisations des variables X et Y necessaires Ã  la position du joueur
+     * @return map[X][Y]  
+     * 
+     */
 	int Y = personnage.getY();
 	int X = personnage.getX();
 	
-	// fonction intial
+	/**
+     * fonction initialisant la creation de la carte et l'affichage de la carte
+     */
 	private void init() {
 		initialiserCarte();
 		afficherCarte();
 	}
 	
-	// Fonction avec toutes les actions lors des mouvements
+	/**
+	 * Classe permettant de suivre chaque mouvement du joueur sur la carte.
+	 */
 	private void tick() throws InterruptedException {
-		// consigne pour le joueur
+		/**
+		 * Appel de la fonction Scanner
+		 * @param Scanner
+		 */
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Veuillez entrer un mouvement, 8 pour haut, 2 pour bas, 4 pour gauche et 6 pour droite");
 		int str = sc.nextInt();
-		
+		/**
+		 * Suite de if
+		 */
 		if(str == 8) {
 			for(int i =0  ; i < 1 ; i++ ) {
 				for(int j = 0; j < 1;j++) {
 					if(map[X][Y] != map[0][Y]) {
-						// Si rocher
+						/**
+						 * En cas de rocher
+						 * @param rocher
+						 */
 						if(map[X-1][Y] != rocher.getVal()) {
-							//si arbre
+							/**
+							 * En cas d'arbre
+							 * @param arbre
+							 */
 							if(map[X-1][Y] != arbre.getVal()) {
-								// si cadenas
+								/**
+								 * En cas de cadenas
+								 * @param cadenas
+								 */
 								if(map[X-1][Y] != cadenas.getVal()) {
-									// on indique que l'on déplace X
+									/**
+									 * On set l'init X 
+									 * @param X
+									 * @return X
+									 */
 									X = personnage.setX(X -1);
-									// Récupération de la tuile
+									/**
+									 * On lit la tuile
+									 * @param tuile
+									 *
+									 */
 									tuile = map[X][Y];
-									// incrémentation de la bourse, du trouseau et de la vie
+									/**
+									 * selon la rÃ©ponse de la tuile, on agit
+									 * @param tuile
+									 *@param bourse
+									 *@param trousseau
+									 *@param vie
+									 */
 									if(map[X][Y] == or.getVal()) {
 										bourse++;
 									}
@@ -83,23 +217,46 @@ public class Game implements Runnable{
 											vie --;
 										}
 									}
-									// on indique ou ce trouve le personnage.
+									/**
+									 *modification de la valeur map [x][y]
+									 *@return map[x][y]
+									 */
 									map[X][Y] = personnage.getVal();
 								}else {
-									// Si le joueur possède une clef
+									/**
+									 *if le joueur Ã  une clef
+									 *@return trouseau
+									 */
 									if(trouseau != 0) {
-										System.out.println("Vous avez consomé une clef pour forcer ce cadenas !");
+										System.out.println("Vous avez consome une clef pour forcer ce cadenas !");
 										trouseau--;
-										// on lui donne deux d'or car il a réussi à ouvrir le cadenas
+										/**
+										 *On donne deux piece d'or si il ouvre un cadenas
+										 *@return bourse
+										 */
 										for(int v = 0; v < 2; v++) {
 											bourse++;
 										}
 										
-										// on indique que l'on déplace X
+										/**
+										 * On set l'init X 
+										 * @param X
+										 * @return X
+										 */
 										X = personnage.setX(X -1);
-										// Récupération de la tuile
+										/**
+										 * On lit la tuile
+										 * @param tuile
+										 *
+										 */
 										tuile = map[X][Y];
-										// incrémentation de la bourse, du trouseau et de la vie
+										/**
+										 * selon la rÃ©ponse de la tuile, on agit
+										 * @param tuile
+										 *@param bourse
+										 *@param trousseau
+										 *@param vie
+										 */
 										if(map[X][Y] == or.getVal()) {
 											bourse++;
 										}
@@ -120,10 +277,10 @@ public class Game implements Runnable{
 									}
 								}
 								}else {
-							System.out.println("Vous êtes bloqués par un arbre!");
+							System.out.println("Vous etes bloques par un arbre!");
 						}
 						}else {
-							System.out.println("Vous êtes bloqués par un rocher !");
+							System.out.println("Vous etes bloques par un rocher !");
 						}
 					}
 				}
@@ -133,17 +290,40 @@ public class Game implements Runnable{
 			for(int i =0  ; i < 1 ; i++ ) {
 				for(int j = 0; j < 1; j++) {
 					if(map[X][Y] != map[19][Y]) {
-						// Si rocher
+						/**
+						 * En cas de rocher
+						 * @param rocher
+						 */
 						if(map[X+1][Y] != rocher.getVal()) {
-							//si arbre
+							/**
+							 * En cas d'arbre
+							 * @param arbre
+							 */
 							if(map[X+1][Y] != arbre.getVal()) {
-								// si cadenas
+								/**
+								 * En cas de cadenas
+								 * @param cadenas
+								 */
 								if(map[X+1][Y] != cadenas.getVal()) {
-									// on indique que l'on déplace X
+									/**
+									 * On set l'init X 
+									 * @param X
+									 * @return X
+									 */
 									X = personnage.setX(X +1);
-									// Récupération de la tuile
+									/**
+									 * On lit la tuile
+									 * @param tuile
+									 *
+									 */
 									tuile = map[X][Y];
-									// incrémentation de la bourse, du trouseau et de la vie
+									/**
+									 * selon la rÃ©ponse de la tuile, on agit
+									 * @param tuile
+									 *@param bourse
+									 *@param trousseau
+									 *@param vie
+									 */
 									if(map[X][Y] == or.getVal()) {
 										bourse++;
 									}
@@ -162,16 +342,30 @@ public class Game implements Runnable{
 									map[X][Y] = personnage.getVal();
 								}else {
 									if(trouseau != 0) {
-										System.out.println("Vous avez consomé une clef pour forcer ce cadenas !");
+										System.out.println("Vous avez consome une clef pour forcer ce cadenas !");
 										trouseau--;
 										for(int v = 0; v < 2; v++) {
 											bourse++;
 										}
-										// on indique que l'on déplace X
+										/**
+										 * On set l'init X 
+										 * @param X
+										 * @return X
+										 */
 										X = personnage.setX(X +1);
-										// Récupération de la tuile
+										/**
+										 * On lit la tuile
+										 * @param tuile
+										 *
+										 */
 										tuile = map[X][Y];
-										// incrémentation de la bourse, du trouseau et de la vie
+										/**
+										 * selon la rÃ©ponse de la tuile, on agit
+										 * @param tuile
+										 *@param bourse
+										 *@param trousseau
+										 *@param vie
+										 */
 										if(map[X][Y] == or.getVal()) {
 											bourse++;
 										}
@@ -188,15 +382,14 @@ public class Game implements Runnable{
 										}
 										map[X][Y] = personnage.getVal();
 									}else {
-									System.out.println("Vous n'avez pas les clefs pour passer par ici !");
-									
+									System.out.println("Vous n'avez pas les clefs pour passer par ici !");									
 									}
 								}
 								}else {
-								System.out.println("Vous êtes bloqués par un arbre!");
+								System.out.println("Vous etes bloques par un arbre!");
 							}
 						}else {
-							System.out.println("Vous êtes bloqués par un rocher !");
+							System.out.println("Vous etes bloques par un rocher !");
 						}
 					}
 				}
@@ -206,17 +399,40 @@ public class Game implements Runnable{
 			for(int i =0  ; i < 1 ; i++ ) {
 				for(int j = 0; j < 1; j++) {
 					if(map[X][Y] != map[X][0]) {
-						// Si rocher
+						/**
+						 * En cas de rocher
+						 * @param rocher
+						 */
 						if(map[X][Y-1] != rocher.getVal()) {
-							//si arbre
+							/**
+							 * En cas d'arbre
+							 * @param arbre
+							 */
 							if(map[X][Y-1] != arbre.getVal()) {
-								// si cadenas
+								/**
+								 * En cas de cadenas
+								 * @param cadenas
+								 */
 								if(map[X][Y-1] != cadenas.getVal()) {
-									// on indique que l'on déplace Y
+									/**
+									 * On set l'init Y 
+									 * @param Y
+									 * @return Y
+									 */
 									Y = personnage.setY(Y -1);
-									// Récupération de la tuile
+									/**
+									 * On lit la tuile
+									 * @param tuile
+									 *
+									 */
 									tuile = map[X][Y];
-									// incrémentation de la bourse, du trouseau et de la vie
+									/**
+									 * selon la rÃ©ponse de la tuile, on agit
+									 * @param tuile
+									 *@param bourse
+									 *@param trousseau
+									 *@param vie
+									 */
 									if(map[X][Y] == or.getVal()) {
 										bourse++;
 									}
@@ -234,17 +450,31 @@ public class Game implements Runnable{
 									map[X][Y] = personnage.getVal();
 								}else {
 									if(trouseau != 0) {
-										System.out.println("Vous avez consomé une clef pour forcer ce cadenas !");
+										System.out.println("Vous avez consome une clef pour forcer ce cadenas !");
 										trouseau--;
 										
 										for(int v = 0; v < 2; v++) {
 											bourse++;
 										}
-										// on indique que l'on déplace Y
+										/**
+										 * On set l'init Y 
+										 * @param Y
+										 * @return Y
+										 */
 										Y = personnage.setY(Y -1);
-										// Récupération de la tuile
+										/**
+										 * On lit la tuile
+										 * @param tuile
+										 *
+										 */
 										tuile = map[X][Y];
-										// incrémentation de la bourse, du trouseau et de la vie
+										/**
+										 * selon la rÃ©ponse de la tuile, on agit
+										 * @param tuile
+										 *@param bourse
+										 *@param trousseau
+										 *@param vie
+										 */
 										if(map[X][Y] == or.getVal()) {
 											bourse++;
 										}
@@ -261,15 +491,14 @@ public class Game implements Runnable{
 										}
 										map[X][Y] = personnage.getVal();
 									}else {
-									System.out.println("Vous n'avez pas les clefs pour passer par ici !");
-									
+									System.out.println("Vous n'avez pas les clefs pour passer par ici !");									
 									}
 								}
 								}else {
-								System.out.println("Vous êtes bloqués par un arbre!");
+								System.out.println("Vous etes bloques par un arbre!");
 							}
 						}else {
-							System.out.println("Vous êtes bloqués par un rocher !");
+							System.out.println("Vous etes bloques par un rocher !");
 						}
 					}
 				}
@@ -279,17 +508,40 @@ public class Game implements Runnable{
 			for(int i =0  ; i < 1 ; i++ ) {
 				for(int j = 0; j < 1; j++) {
 					if(map[X][Y] != map[X][19]) {
-						// Si rocher
+						/**
+						 * En cas de rocher
+						 * @param rocher
+						 */
 						if(map[X][Y+1] != rocher.getVal()) {
-							//si arbre
+							/**
+							 * En cas d'arbre
+							 * @param arbre
+							 */
 							if(map[X][Y+1] != arbre.getVal()) {
-								// si cadenas
+								/**
+								 * En cas de cadenas
+								 * @param cadenas
+								 */
 								if(map[X][Y+1] != cadenas.getVal()) {
-									// on indique que l'on déplace Y
+									/**
+									 * On set l'init Y 
+									 * @param Y
+									 * @return Y
+									 */
 									Y = personnage.setY(Y +1);
-									// Récupération de la tuile
+									/**
+									 * On lit la tuile
+									 * @param tuile
+									 *
+									 */
 									tuile = map[X][Y];
-									// incrémentation de la bourse, du trouseau et de la vie
+									/**
+									 * selon la rÃ©ponse de la tuile, on agit
+									 * @param tuile
+									 *@param bourse
+									 *@param trousseau
+									 *@param vie
+									 */
 									if(map[X][Y] == or.getVal()) {
 										bourse++;
 									}
@@ -309,16 +561,30 @@ public class Game implements Runnable{
 									map[X][Y] = personnage.getVal();
 								}else {
 									if(trouseau != 0) {
-										System.out.println("Vous avez consomé une clef pour forcer ce cadenas !");
+										System.out.println("Vous avez consome une clef pour forcer ce cadenas !");
 										trouseau--;
 											for(int v = 0; v < 2; v++) {
 												bourse++;
 											}
-											// on indique que l'on déplace Y
+											/**
+											 * On set l'init Y 
+											 * @param Y
+											 * @return Y
+											 */
 										Y = personnage.setY(Y +1);
-										// Récupération de la tuile
+										/**
+										 * On lit la tuile
+										 * @param tuile
+										 *
+										 */
 										tuile = map[X][Y];
-										// incrémentation de la bourse, du trouseau et de la vie
+										/**
+										 * selon la rÃ©ponse de la tuile, on agit
+										 * @param tuile
+										 *@param bourse
+										 *@param trousseau
+										 *@param vie
+										 */
 										if(map[X][Y] == or.getVal()) {
 											bourse++;
 										}
@@ -339,17 +605,26 @@ public class Game implements Runnable{
 									}
 								}
 								}else {
-							System.out.println("Vous êtes bloqués par un arbre!");
+							System.out.println("Vous etes bloques par un arbre!");
 						}
 					}else {
-						System.out.println("Vous êtes bloqués par un rocher !");
+						System.out.println("Vous etes bloques par un rocher !");
 					}
 					}
 				}
 			}
 		}
 		if(str == 0) {
-			// On compare la variable tuile avec les valeurs des tuiles
+			/**
+			 * On compare la valeur tuile obtenu avec les elements
+			 * @param herbes
+			 *@param fleur
+			 *@param clef
+			 *@param or
+			 *@param cadenas
+			 *@param piege
+			 *@param monstre
+			 */
 				if(tuile != herbe.getVal()) {
 					if(tuile != fleur.getVal()) {
 						if(tuile != clef.getVal()) {
@@ -364,7 +639,7 @@ public class Game implements Runnable{
 											}else {	
 											System.out.println("IT'S A TRAP : 7");}
 										}else {	
-										System.out.println("C'est un cadenas rouillé : 6");}
+										System.out.println("C'est un cadenas rouille : 6");}
 									}else {	
 								System.out.println("C'est de l'or : 5");}									
 							}else {	
@@ -373,29 +648,49 @@ public class Game implements Runnable{
 					System.out.println("Ce sont de belles fleures : 1");}
 				}else {
 				System.out.println("C'est de l'herbe : 0");}
-		}else {
-			System.out.println("Mouvement interdit");
 		}
 }
+	/**
+	 * Classe permettant l'affichage de la carte
+	 */
 	private void render() {
-		//Fonction d'affichage de la carte et de l'interface
+		/**
+		 * Classe permettant l'affichage de la carte
+		 * @return map
+		 */
 		afficherCarte();
 		System.out.println("il vous reste "+ vie + " point de vie . Votre bourse contient " + bourse + " d'or et votre trouseaux contient " + trouseau + " clefs");
 	}
-	
+	/**
+	 * Classe run qui lance les autres fonctions
+	 * @return runnable
+	 */
 	public void run() {
-		// Fonction de runable qui appelle les autres fonctions
+		/**
+		 * insertion de la fonction init()
+		 */
 		init();
-		// boolean running qui vérifie si on ne lance pas deux fois le jeu
+		/**
+		 * verification que running est true
+		 * @param running
+		 * @throws si il est dÃ©jÃ  en train de tourner ou si un element problematique apparait dans les ticks
+		 */
 		while(running) {
 			try {
 				tick();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			/**
+			*Appel fonction render
+			 */
 			render();
 			
-			// If de victoire et de défaites
+			/**
+			 * en cas de victoire et de defaites
+			 * @param bourse
+			 * @param vie
+			 */
 			if(bourse == 10) {
 				System.out.print("VOUS AVEZ GAGNE !");
 				stop();
@@ -405,18 +700,40 @@ public class Game implements Runnable{
 				stop();
 			}
 		}
-		// arrêt du jeu
+		/**
+		 * arrÃªt du jeu
+		 *
+		 * @return stop
+		 */
 		stop();
 		
 	}
-// fonction de génération de la carte
+	/**
+	 * Fonction intialisation de la carte
+	 *
+	 * @return map
+	 */
 	public void initialiserCarte() {
 		for(int x = 0; x < 20; x++) {
 			for(int y = 0; y <20;y++) {
-				// on place le X dans les variables de positions
+				/**
+				 * set de la position du personnage
+				 *@param X
+				 *@param Y
+				 * @return map[X][Y]
+				 */
 				map[X][Y] = personnage.getVal();
-				// Placement des minimuns
-				for(int k = 0; k <3; k++) { 
+				/**
+				 * placement des minimuns
+				 *@param cadenas
+				 *@param clef
+				 *@param fleur
+				 *@param arbre
+				 *@param rocher
+				 *@param piege
+				 *@param or
+				 */
+				for(int k = 0; k <20; k++) { 
 					map[x][y] = cadenas.getVal();
 					map[x][y] = clef.getVal();
 				};
@@ -434,9 +751,14 @@ public class Game implements Runnable{
 				for(int k = 0; k <20; k++) {
 					map[x][y] = or.getVal();
 				}
-
+				/**
+				 * fonction random
+				 */
 				Random random = new Random();
-				//switch aléatoire
+				/**
+				 * switch aleatoire
+				 * @return map[x][y]
+				 */
 				switch(random.nextInt(9)) {
 				case 0:
 					map[x][y] = herbe.getVal();
@@ -450,13 +772,13 @@ public class Game implements Runnable{
 					map[x][y] = rocher.getVal();
 					break;
 				case 4:
-					map[x][y] = herbe.getVal();
+					map[x][y] = clef.getVal();
 					break;
 				case 5:
 					map[x][y] = or.getVal();
 					break;
 				case 6:
-					map[x][y] = herbe.getVal();
+					map[x][y] = cadenas.getVal();
 					break;
 				case 7:
 					map[x][y] = piege.getVal();
@@ -464,11 +786,16 @@ public class Game implements Runnable{
 				case 8:
 					map[x][y] = monstre.getVal();
 					break;
+					
 				}
 			}
 		}
 	}
-// affichage de la carte
+	/**
+	 * Fonction affichage de la carte
+	 *
+	 * @return map[i][j]
+	 */
 	public void afficherCarte() {
 		
 		for(int i = 0; i < 20; i++ ) {
@@ -479,21 +806,30 @@ public class Game implements Runnable{
 		}
 		
 	}
-	// Fonction runnable de start et de stop
+	/**
+	 * Fonction start() permettant de lancer le runnable
+	 *
+	 * @return start
+	 * @param running
+	 */
 	public synchronized void start() {
-		// on véfrifie si le jeu ne ce lance pas deux fois
 		if(running)
 			return;
 		running = true;
 		thread = new Thread(this);
 		thread.start();
 	}
+	/**
+	 * Fonction stop() permettant de stoper le runnable
+	 *
+	 * @return stop
+	 * @param running
+	 */
 	public synchronized void stop() {
-		// idem, on vérifie que le jeu n'est pas déjà à l'arrêt
 		if(!running)
 			return;
 		running = false;
-		System.out.println("Arrêt du jeu");
+		System.out.println("Arret du jeu");
 		try {
 			thread.join();
 		} catch(InterruptedException e) {
